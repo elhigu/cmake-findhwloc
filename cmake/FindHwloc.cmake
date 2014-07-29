@@ -13,8 +13,7 @@
 #   Hwloc_FOUND          - True if hwloc was found
 #   Hwloc_INCLUDE_DIRS   - include directories for hwloc
 #   Hwloc_LIBRARIES      - link against this library to use hwloc
-#   Hwloc_VERSION_MAJOR  - The major version of the hwloc implementation
-#   Hwloc_VERSION_MINOR  - The minor version of the hwloc implementation
+#   Hwloc_VERSION_STRING - version
 #
 # The module will also define two cache variables::
 #
@@ -93,6 +92,29 @@ if(WIN32)
   ENDIF()
 
   #
+  # Resolve version if some compiled binary found...
+  #
+  find_program(HWLOC_INFO_EXECUTABLE
+    NAMES 
+      hwloc-info
+    PATHS
+      ENV HWLOC_ROOT 
+    PATH_SUFFIXES
+      bin
+  )
+  
+  if(HWLOC_INFO_EXECUTABLE)
+    execute_process(
+      COMMAND ${HWLOC_INFO_EXECUTABLE} "--version" 
+      OUTPUT_VARIABLE HWLOC_VERSION_LINE 
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    string(REGEX MATCH "([0-9]+.[0-9]+)$" 
+      Hwloc_VERSION_STRING "${HWLOC_VERSION_LINE}")
+    unset(HWLOC_VERSION_LINE)
+  endif()
+  
+  #
   # All good
   #
 
@@ -111,6 +133,7 @@ if(WIN32)
     Hwloc_LIBRARY)
 
 else()
+
   # Find with pkgconfig
   find_package(PkgConfig)
 
