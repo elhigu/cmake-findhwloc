@@ -5,6 +5,9 @@
 # Try to find Portable Hardware Locality (hwloc) libraries.
 # http://www.open-mpi.org/software/hwloc
 #
+# You may declare HWLOC_ROOT environment variable to tell where
+# your hwloc library is installed. 
+#
 # Once done this will define::
 #
 #   Hwloc_FOUND          - True if hwloc was found
@@ -52,9 +55,46 @@ if(WIN32)
     PATH_SUFFIXES
       lib
   )
-  # TODO: check that user has correct 32 or 64bit lib
-  #       (can it be checked without test linking?)
-  #       if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+  #
+  # Check if the found library can be used to linking 
+  #
+  SET (_TEST_SOURCE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/linktest.c")
+  FILE (WRITE "${_TEST_SOURCE}"
+    "
+    #include <hwloc.h>
+    int main()
+    { 
+      hwloc_topology_t topology;
+      int nbcores;
+      hwloc_topology_init(&topology);
+      hwloc_topology_load(topology);
+      nbcores = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_CORE);
+      hwloc_topology_destroy(topology);
+      return 0;
+    }
+    "
+  )
+
+  TRY_COMPILE(_LINK_SUCCESS ${CMAKE_BINARY_DIR} "${_TEST_SOURCE}"
+    CMAKE_FLAGS
+    "-DINCLUDE_DIRECTORIES:STRING=${Hwloc_INCLUDE_DIR}"
+    CMAKE_FLAGS
+    "-DLINK_LIBRARIES:STRING=${Hwloc_LIBRARY}"
+  )
+
+  IF(NOT _LINK_SUCCESS)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      message(STATUS "You are building 64bit target.")
+    ELSE()
+      message(STATUS "You are building 32bit code. If you like to build x64 use e.g. -G 'Visual Studio 12 Win64' generator." )
+    ENDIF()
+    message(FATAL_ERROR "Library found, but linking test program failed.")
+  ENDIF()
+
+  #
+  # All good
+  #
 
   set(Hwloc_LIBRARIES ${Hwloc_LIBRARY})
   set(Hwloc_INCLUDE_DIRS ${Hwloc_INCLUDE_DIR})
