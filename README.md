@@ -1,11 +1,18 @@
-Cross platform  FindHwloc.cmake
+Cross platform FindHwloc.cmake
 ================================
 
 Finds out if hwloc is available and suggests how to get it for your platform.
 (e.g. download binary distribution for Windows and setup HWLOC_ROOT env variable)
 
-On Windows macro tries to find static library, so you won't need to install any
-extra dlls.
+Sets variables:
+
+```
+#   Hwloc_FOUND          - True if hwloc was found
+#   Hwloc_INCLUDE_DIRS   - include directories for hwloc
+#   Hwloc_LIBRARIES      - link against this library to use hwloc
+#   Hwloc_VERSION_STRING - version
+```
+
 
 ## Try it out
 
@@ -22,7 +29,12 @@ In Windows you would probably use Visual Studio:
 2. Setup your HWLOC_ROOT environment variable to where your library is
 
 ```
-cmake -G "Visual Studio 12" ../cmake-findhwloc
+HWLOC_ROOT=/path/to/hwloc-win32-build-1.9 cmake -G "Visual Studio 12" ../cmake-findhwloc
+```
+
+or
+
+```
 cmake -G "Visual Studio 12 Win64" ../cmake-findhwloc
 ```
 
