@@ -173,10 +173,14 @@ else()
       set(HWLOC_GL_FOUND 1)
     endif()
 
-    if(_hwloc_output)
-      message(STATUS
-        "Found hwloc ${HWLOC_VERSION} in ${HWLOC_INCLUDE_DIRS}:${HWLOC_LIBRARIES}")
-    endif()
+    set(Hwloc_FOUND TRUE)
+    set(Hwloc_INCLUDE_DIRS  ${HWLOC_INCLUDE_DIRS})
+    set(Hwloc_LIBRARIES ${HWLOC_LIBRARIES})
+    set(Hwloc_VERSION_STRING ${HWLOC_VERSION})
+    unset(HWLOC_FOUND)
+    unset(HWLOC_INCLUDE_DIRS)
+    unset(HWLOC_LIBRARIES)
+    unset(HWLOC_VERSION)
   endif()
 endif()
 
