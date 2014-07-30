@@ -166,8 +166,8 @@ else()
 
   if(HWLOC_FOUND)
     include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(HWLOC DEFAULT_MSG HWLOC_LIBRARIES
-      HWLOC_INCLUDE_DIRS)
+    # include directory is not required to be set if hwloc.h is in standard path
+    find_package_handle_standard_args(HWLOC DEFAULT_MSG HWLOC_LIBRARIES)
 
     if(NOT ${HWLOC_VERSION} VERSION_LESS 1.7.0)
       set(HWLOC_GL_FOUND 1)
